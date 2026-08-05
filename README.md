@@ -6,6 +6,8 @@ CI matrix for checking installer / dependency manager support for [self-referent
 
 ## Current status
 
+> Conda does not support extras before [CEP 44](https://github.com/conda/ceps/blob/main/cep-0044.md) implementation
+
 [![pip](https://github.com/Trenza1ore/Self-Referential-Extras/actions/workflows/pip.yml/badge.svg)](https://github.com/Trenza1ore/Self-Referential-Extras/actions/workflows/pip.yml)
 [![uv](https://github.com/Trenza1ore/Self-Referential-Extras/actions/workflows/uv.yml/badge.svg)](https://github.com/Trenza1ore/Self-Referential-Extras/actions/workflows/uv.yml)
 [![poetry](https://github.com/Trenza1ore/Self-Referential-Extras/actions/workflows/poetry.yml/badge.svg)](https://github.com/Trenza1ore/Self-Referential-Extras/actions/workflows/poetry.yml)
@@ -15,8 +17,6 @@ CI matrix for checking installer / dependency manager support for [self-referent
 [![whl2conda](https://github.com/Trenza1ore/Self-Referential-Extras/actions/workflows/whl2conda.yml/badge.svg)](https://github.com/Trenza1ore/Self-Referential-Extras/actions/workflows/whl2conda.yml)
 
 ## Commands for the test cases
-
-> Conda does not support extras, so unless whl2conda provides a way to "bake in" extras during wheel conversion, it's guaranteed to fail.
 
 | Tool | `add` | `install` | `sync` |
 |------|-------|-----------|--------|
