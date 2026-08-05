@@ -1,12 +1,8 @@
 # Self-Referential Extras
 
-Demo package and CI matrix for [self-referential extras](https://pip.pypa.io/en/latest/reference/requirement-specifiers/#self-referential-extras) — optional dependencies that refer back to the same package with other extras.
+CI matrix for checking installer / dependency manager support for [self-referential extras](https://pip.pypa.io/en/latest/reference/requirement-specifiers/#self-referential-extras): optional dependencies that refer back to the same package with other extras. Workflows run weekly with the latest release version of each installer / dependency manager.
 
-Each workflow builds a wheel (or converts it for conda), requests the `all` extra, and checks that `pytest`, `ruff`, and `sphinx` are importable. Where a tool exposes `add`, `install`, and/or `sync`, each is a separate job; every present job must pass for a green badge.
-
-Workflows also run on a weekly cron (Saturday 00:00 UTC) against the latest installer releases.
-
-## Installer status
+## Current Status
 
 [![pip](https://github.com/Trenza1ore/Self-Referential-Extras/actions/workflows/pip.yml/badge.svg)](https://github.com/Trenza1ore/Self-Referential-Extras/actions/workflows/pip.yml)
 [![uv](https://github.com/Trenza1ore/Self-Referential-Extras/actions/workflows/uv.yml/badge.svg)](https://github.com/Trenza1ore/Self-Referential-Extras/actions/workflows/uv.yml)
@@ -16,7 +12,7 @@ Workflows also run on a weekly cron (Saturday 00:00 UTC) against the latest inst
 [![hatch](https://github.com/Trenza1ore/Self-Referential-Extras/actions/workflows/hatch.yml/badge.svg)](https://github.com/Trenza1ore/Self-Referential-Extras/actions/workflows/hatch.yml)
 [![whl2conda](https://github.com/Trenza1ore/Self-Referential-Extras/actions/workflows/whl2conda.yml/badge.svg)](https://github.com/Trenza1ore/Self-Referential-Extras/actions/workflows/whl2conda.yml)
 
-## Commands tested
+## Commands for the Test Cases
 
 > Conda does not support extras, so unless whl2conda provides a way to "bake in" extras during wheel conversion, it's guaranteed to fail.
 
