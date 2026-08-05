@@ -3,8 +3,16 @@ name: uv
 on:
   push:
     branches: [main]
+    paths:
+      - ".github/workflows/**"
+      - "self_referential_extras/**"
+      - "pyproject.toml"
   pull_request:
     branches: [main]
+    paths:
+      - ".github/workflows/**"
+      - "self_referential_extras/**"
+      - "pyproject.toml"
   schedule:
     - cron: "0 0 * * 6"
   workflow_dispatch:
