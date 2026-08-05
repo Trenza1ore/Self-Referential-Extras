@@ -33,7 +33,7 @@ jobs:
           mkdir -p /tmp/uv-add-test
           cd /tmp/uv-add-test
           uv init --name uv-add-test --python 3.12
-          uv add "${WHEEL}" --extra all
+          uv add "${WHEEL}[all]"
 
       - name: Verify extras resolved
         working-directory: /tmp/uv-add-test

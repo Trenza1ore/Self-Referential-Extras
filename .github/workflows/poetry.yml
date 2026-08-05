@@ -31,7 +31,7 @@ jobs:
           mkdir -p /tmp/poetry-add-test
           cd /tmp/poetry-add-test
           poetry init --name poetry-add-test --python "^3.12" -n
-          poetry add "${WHEEL}" --extras all
+          poetry add "${WHEEL}[all]"
 
       - name: Verify extras resolved
         working-directory: /tmp/poetry-add-test

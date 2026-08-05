@@ -23,8 +23,8 @@ Workflows also run on a weekly cron (Saturday 00:00 UTC) against the latest inst
 | Tool | `add` | `install` | `sync` |
 |------|-------|-----------|--------|
 | pip | — | `python -m pip install "${WHEEL}[all]"` | — |
-| uv | `uv add "${WHEEL}" --extra all` | `uv pip install --system "${WHEEL}[all]"` | `uv lock`<br>`uv sync` |
-| poetry | `poetry add "${WHEEL}" --extras all` | — | `poetry lock`<br>`poetry sync --no-root` |
+| uv | `uv add "${WHEEL}[all]"` | `uv pip install --system "${WHEEL}[all]"` | `uv lock`<br>`uv sync` |
+| poetry | `poetry add "${WHEEL}[all]"` | — | `poetry lock`<br>`poetry sync --no-root` |
 | pdm | `pdm add "${WHEEL}[all]"` | `pdm add --no-sync "${WHEEL}[all]"`<br>`pdm install` | `pdm lock`<br>`pdm sync` |
 | pipenv | — | `pipenv install "${WHEEL}[all]"` | `pipenv lock`<br>`pipenv sync` |
 | hatch | — | — | `hatch env lock`<br>`hatch dep sync` |
