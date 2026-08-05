@@ -26,7 +26,7 @@ CI matrix for checking installer / dependency manager support for [self-referent
 | hatch | — | — | `hatch env lock`<br>`hatch dep sync` |
 | whl2conda | — | `whl2conda convert "$WHEEL" --resolve-extras`<br>`whl2conda install "$CONDA_PKG" --create -n self_ref_extras --yes` | — |
 
-## Package extras
+## Package Extras
 
 ```toml
 [project.optional-dependencies]
@@ -41,3 +41,17 @@ all = ["self-referential-extras[test,format,docs]"]
 ```
 
 Installing `self-referential-extras[all]` should pull in `pytest`, `ruff`, and `sphinx`.
+
+## When was this Supported
+
+> This part may contain errors, as I didn't actually test all of them
+
+| Tool | Version | Release Date | PR |
+|------|---------|--------------|----|
+| pip | 21.2 | 2021.7 | — |
+| uv | 0.5.27 | 2025.2 | [#11142](https://github.com/astral-sh/uv/pull/11142) |
+| poetry | 2.1.0 | 2025.2 | [#10106](https://github.com/python-poetry/poetry/pull/10106) |
+| pdm | - | - | - |
+| pipenv | — | - | - |
+| hatch | — | — | - |
+| whl2conda | — | - |
