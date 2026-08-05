@@ -1,0 +1,46 @@
+name: whl2conda
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: "0 0 * * 6"
+  workflow_dispatch:
+
+jobs:
+  install:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash -l {0}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: conda-incubator/setup-miniconda@v3
+        with:
+          python-version: "3.12"
+          auto-update-conda: true
+          activate-environment: build
+
+      - name: Install latest pip, build, and whl2conda
+        run: python -m pip install -U pip build whl2conda
+
+      - name: Build wheel
+        run: python -m build --wheel
+
+      - name: Convert wheel to conda package
+        run: |
+          WHEEL=$(echo dist/*.whl)
+          whl2conda convert "$WHEEL" --resolve-extras
+
+      - name: whl2conda install
+        run: |
+          CONDA_PKG=$(echo dist/*.conda)
+          whl2conda install "$CONDA_PKG" --create -n self_ref_extras --yes
+
+      - name: Verify extras resolved
+        run: |
+          conda activate self_ref_extras
+          python -c "import pytest, ruff, sphinx; import self_referential_extras"

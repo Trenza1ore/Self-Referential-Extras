@@ -1,0 +1,103 @@
+name: uv
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: "0 0 * * 6"
+  workflow_dispatch:
+
+jobs:
+  add:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - uses: astral-sh/setup-uv@v5
+
+      - name: Install latest build
+        run: uv pip install --system -U build
+
+      - name: Build wheel
+        run: python -m build --wheel
+
+      - name: uv add wheel with [all] extra
+        run: |
+          WHEEL=$(echo "$GITHUB_WORKSPACE"/dist/*.whl)
+          mkdir -p /tmp/uv-add-test
+          cd /tmp/uv-add-test
+          uv init --name uv-add-test --python 3.12
+          uv add "${WHEEL}" --extra all
+
+      - name: Verify extras resolved
+        working-directory: /tmp/uv-add-test
+        run: uv run python -c "import pytest, ruff, sphinx; import self_referential_extras"
+
+  install:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - uses: astral-sh/setup-uv@v5
+
+      - name: Install latest build
+        run: uv pip install --system -U build
+
+      - name: Build wheel
+        run: python -m build --wheel
+
+      - name: uv pip install wheel with [all] extra
+        run: |
+          WHEEL=$(echo dist/*.whl)
+          uv pip install --system "${WHEEL}[all]"
+
+      - name: Verify extras resolved
+        run: python -c "import pytest, ruff, sphinx; import self_referential_extras"
+
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - uses: astral-sh/setup-uv@v5
+
+      - name: Install latest build
+        run: uv pip install --system -U build
+
+      - name: Build wheel
+        run: python -m build --wheel
+
+      - name: Declare dependency then uv sync
+        run: |
+          WHEEL=$(echo "$GITHUB_WORKSPACE"/dist/*.whl)
+          mkdir -p /tmp/uv-sync-test
+          cd /tmp/uv-sync-test
+          cat > pyproject.toml <<EOF
+          [project]
+          name = "uv-sync-test"
+          version = "0.1.0"
+          requires-python = ">=3.12"
+          dependencies = [
+            "self-referential-extras[all] @ file://${WHEEL}"
+          ]
+          EOF
+          uv lock
+          uv sync
+
+      - name: Verify extras resolved
+        working-directory: /tmp/uv-sync-test
+        run: uv run python -c "import pytest, ruff, sphinx; import self_referential_extras"

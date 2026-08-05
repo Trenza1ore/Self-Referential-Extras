@@ -1,0 +1,77 @@
+name: pipenv
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: "0 0 * * 6"
+  workflow_dispatch:
+
+jobs:
+  install:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install latest pip, build, and pipenv
+        run: python -m pip install -U pip build pipenv
+
+      - name: Build wheel
+        run: python -m build --wheel
+
+      - name: pipenv install wheel with [all] extra
+        run: |
+          WHEEL=$(echo "$GITHUB_WORKSPACE"/dist/*.whl)
+          mkdir -p /tmp/pipenv-install-test
+          cd /tmp/pipenv-install-test
+          pipenv --python 3.12
+          pipenv install "${WHEEL}[all]"
+
+      - name: Verify extras resolved
+        working-directory: /tmp/pipenv-install-test
+        run: pipenv run python -c "import pytest, ruff, sphinx; import self_referential_extras"
+
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install latest pip, build, and pipenv
+        run: python -m pip install -U pip build pipenv
+
+      - name: Build wheel
+        run: python -m build --wheel
+
+      - name: Declare dependency then pipenv sync
+        run: |
+          WHEEL=$(echo "$GITHUB_WORKSPACE"/dist/*.whl)
+          mkdir -p /tmp/pipenv-sync-test
+          cd /tmp/pipenv-sync-test
+          cat > Pipfile <<EOF
+          [[source]]
+          url = "https://pypi.org/simple"
+          verify_ssl = true
+          name = "pypi"
+
+          [packages]
+          self-referential-extras = {path = "${WHEEL}", extras = ["all"]}
+
+          [requires]
+          python_version = "3.12"
+          EOF
+          pipenv lock
+          pipenv sync
+
+      - name: Verify extras resolved
+        working-directory: /tmp/pipenv-sync-test
+        run: pipenv run python -c "import pytest, ruff, sphinx; import self_referential_extras"

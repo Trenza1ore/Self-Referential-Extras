@@ -1,0 +1,21 @@
+[project]
+name = "self-referential-extras"
+version = "0.1.0"
+description = "Demo package for self-referential extras"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = []
+
+[project.optional-dependencies]
+test = ["pytest"]
+format = ["ruff"]
+docs = ["sphinx"]
+dev = [
+  "self-referential-extras[test]",
+  "self-referential-extras[format]",
+]
+all = ["self-referential-extras[test,format,docs]"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

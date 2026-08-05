@@ -1,0 +1,78 @@
+name: poetry
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: "0 0 * * 6"
+  workflow_dispatch:
+
+jobs:
+  add:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install latest pip, build, and poetry
+        run: python -m pip install -U pip build poetry
+
+      - name: Build wheel
+        run: python -m build --wheel
+
+      - name: poetry add wheel with [all] extra
+        run: |
+          WHEEL=$(echo "$GITHUB_WORKSPACE"/dist/*.whl)
+          mkdir -p /tmp/poetry-add-test
+          cd /tmp/poetry-add-test
+          poetry init --name poetry-add-test --python "^3.12" -n
+          poetry add "${WHEEL}" --extras all
+
+      - name: Verify extras resolved
+        working-directory: /tmp/poetry-add-test
+        run: poetry run python -c "import pytest, ruff, sphinx; import self_referential_extras"
+
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install latest pip, build, and poetry
+        run: python -m pip install -U pip build poetry
+
+      - name: Build wheel
+        run: python -m build --wheel
+
+      - name: Declare dependency then poetry sync
+        run: |
+          WHEEL=$(echo "$GITHUB_WORKSPACE"/dist/*.whl)
+          mkdir -p /tmp/poetry-sync-test
+          cd /tmp/poetry-sync-test
+          cat > pyproject.toml <<EOF
+          [project]
+          name = "poetry-sync-test"
+          version = "0.1.0"
+          requires-python = ">=3.12"
+          dependencies = [
+            "self-referential-extras[all] @ file://${WHEEL}"
+          ]
+
+          [build-system]
+          requires = ["poetry-core>=2.0.0,<3.0.0"]
+          build-backend = "poetry.core.masonry.api"
+          EOF
+          poetry lock
+          poetry sync --no-root
+
+      - name: Verify extras resolved
+        working-directory: /tmp/poetry-sync-test
+        run: poetry run python -c "import pytest, ruff, sphinx; import self_referential_extras"
