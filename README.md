@@ -1,6 +1,6 @@
 # Self-Referential Extras
 
-> Created to support https://github.com/pypa/packaging.python.org/pull/2087
+> Created to support [pypa/packaging.python.org#2087](https://github.com/pypa/packaging.python.org/pull/2087)
 
 CI matrix for checking package managers' support for [self-referential extras](https://pip.pypa.io/en/latest/reference/requirement-specifiers/#self-referential-extras): optional dependencies that refer back to the same package with other extras. Workflows run weekly with the latest release version of each package manager.
 
@@ -46,7 +46,7 @@ Installing `self-referential-extras[all]` should pull in `pytest`, `ruff`, and `
 
 ## When was this supported?
 
-> This part may contain errors, it's kinda like my personal notes...
+> This part may contain errors, it's kinda like my personal notes~
 
 | Tool      | Version   | Release Date | Related PRs     |
 |-----------|-----------|--------------|-----------------|
